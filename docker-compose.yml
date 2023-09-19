@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  dev-db:
+    image: mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: MyN3wP4ssw0rd
+      MYSQL_DATABASE: omnichannel
+    networks:
+      - channel-net
+networks:
+  channel-net:
