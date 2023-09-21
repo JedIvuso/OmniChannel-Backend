@@ -3,6 +3,7 @@ import { ProjectCategoryService } from './project_category.service';
 import { ProjectDto } from './project_dto/project.dto';
 import { ProjectUpdateDto } from './project_dto/project-update.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 
 @Controller('project-category')
@@ -18,11 +19,21 @@ export class ProjectCategoryController {
   @UseInterceptors(
     FileInterceptor('projectImage', {
       limits: {
-        fileSize: 1024 * 1024 * 4, // Max file size (4 MB in this example)
+        fileSize: 1024 * 1024 * 4,
       },
+      storage: diskStorage({
+        destination: "./images",
+        filename: (req, file, cb) => {
+            const name = file.originalname.split(".")[0];
+            const fileExtension = file.originalname.split(".")[1];
+            const newFileName = name.split(" ").join("_") + "_" + Date.now() + "." + fileExtension;
+
+            cb(null, newFileName);
+        }
+      }),
       fileFilter: (req, file, callback) => {
         if (!file.originalname.match(/\.(png|jpeg|jpg)$/)) {
-          return callback(new Error('Only image files are allowed'), false);
+          return callback(new Error('please upload JPEG,JPG,PNG file extension'), false);
         }
         callback(null, true);
       },

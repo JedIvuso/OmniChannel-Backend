@@ -7,11 +7,14 @@ import { catchError } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { readFile } from 'fs/promises';
-import FormData from 'form-data';
+import * as FormData from 'form-data';
 
 @Injectable()
 export class ProjectCategoryService {
-  constructor(private prisma: PrismaService, private httpService: HttpService) {}
+  constructor(
+    private prisma: PrismaService,
+    private httpService: HttpService,
+  ) {}
 
   async createProject(projectImage: Express.Multer.File, dto: ProjectDto) {
     const { projectDescription, projectName } = dto;
@@ -25,8 +28,14 @@ export class ProjectCategoryService {
     if (existingProject) {
       throw new BadRequestException('ProjectName already exists');
     }
-
-    // Now, implement the image upload code similar to what you provided
+    
+    console.log(projectImage)
+    console.log(projectImage.buffer)
+    
+    if (!projectImage.buffer) {
+        throw new Error('Uploaded file or its buffer is undefined.');
+      }
+    
     const formData = new FormData();
     formData.append('image', projectImage.buffer.toString('base64'));
 
@@ -37,20 +46,24 @@ export class ProjectCategoryService {
           formData,
         )
         .pipe(
-          catchError((error: AxiosError) => {
-            throw new Error(`Image upload failed: ${error.message}`);
-          }),
+            catchError((error: AxiosError) => {
+              if (error.response && error.response.data) {
+                console.error('Error response from imgBB API:', error.response.data);
+              }
+              throw new Error(`Image upload failed: ${error.message}`);
+            }),
         ),
     );
 
-    // Once the image is uploaded, you can create the project with the image URL
     await this.prisma.eclProjects.create({
       data: {
         projectDescription,
-        projectImage: imageData.data.url, // Use the uploaded image URL
+        projectImage: imageData.data.url,
         projectName,
       },
     });
+    console.log(imageData)
+    console.log(imageData.data)
 
     return {
       message: 'Project created successfully',
