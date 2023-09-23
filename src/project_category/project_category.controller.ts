@@ -10,11 +10,6 @@ import { diskStorage } from 'multer';
 export class ProjectCategoryController {
   constructor(private readonly projectCategory: ProjectCategoryService) {}
 
-//   @Post('create-project-category')
-//   createProject(@Body() dto: ProjectDto) {
-//     return this.projectCategory.createProject(dto);
-//   }
-
 @Post('create-project-category')
   @UseInterceptors(
     FileInterceptor('projectImage', {
@@ -44,7 +39,30 @@ export class ProjectCategoryController {
   }
 
   @Patch('update-project')
-  updateProject(@Body() dto: ProjectUpdateDto) {
+  @UseInterceptors(
+    FileInterceptor('projectImage', {
+      limits: {
+        fileSize: 1024 * 1024 * 4,
+      },
+      storage: diskStorage({
+        destination: "./images",
+        filename: (req, file, cb) => {
+            const name = file.originalname.split(".")[0];
+            const fileExtension = file.originalname.split(".")[1];
+            const newFileName = name.split(" ").join("_") + "_" + Date.now() + "." + fileExtension;
+
+            cb(null, newFileName);
+        }
+      }),
+      fileFilter: (req, file, callback) => {
+        if (!file.originalname.match(/\.(png|jpeg|jpg)$/)) {
+          return callback(new Error('please upload JPEG,JPG,PNG file extension'), false);
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  updateProject(@UploadedFile() @Body() dto: ProjectUpdateDto) {
     return this.projectCategory.updateProject(dto);
   }
 

@@ -28,42 +28,14 @@ export class ProjectCategoryService {
     if (existingProject) {
       throw new BadRequestException('ProjectName already exists');
     }
-    
-    console.log(projectImage)
-    console.log(projectImage.buffer)
-    
-    if (!projectImage.buffer) {
-        throw new Error('Uploaded file or its buffer is undefined.');
-      }
-    
-    const formData = new FormData();
-    formData.append('image', projectImage.buffer.toString('base64'));
-
-    const { data: imageData } = await firstValueFrom(
-      this.httpService
-        .post(
-          `https://api.imgbb.com/1/upload?expiration=600&key=${process.env.IMG_API_KEY}`,
-          formData,
-        )
-        .pipe(
-            catchError((error: AxiosError) => {
-              if (error.response && error.response.data) {
-                console.error('Error response from imgBB API:', error.response.data);
-              }
-              throw new Error(`Image upload failed: ${error.message}`);
-            }),
-        ),
-    );
 
     await this.prisma.eclProjects.create({
       data: {
         projectDescription,
-        projectImage: imageData.data.url,
+        projectImage: projectImage.filename,
         projectName,
       },
     });
-    console.log(imageData)
-    console.log(imageData.data)
 
     return {
       message: 'Project created successfully',
@@ -99,28 +71,12 @@ export class ProjectCategoryService {
       );
     }
 
-    const formData = new FormData();
-    formData.append('image', projectImage.buffer.toString('base64'));
-
-    const { data: imageData } = await firstValueFrom(
-      this.httpService
-        .post(
-          `https://api.imgbb.com/1/upload?expiration=600&key=${process.env.IMG_API_KEY}`,
-          formData,
-        )
-        .pipe(
-          catchError((error: AxiosError) => {
-            throw new Error(`Image upload failed: ${error.message}`);
-          }),
-        ),
-    );
-
     await this.prisma.eclProjects.update({
       where: { projectId },
       data: {
         projectDescription,
         projectName,
-        projectImage: imageData.data.url,
+        projectImage: projectImage.filename,
       },
     });
 
