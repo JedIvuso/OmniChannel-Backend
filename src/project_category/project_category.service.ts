@@ -16,87 +16,88 @@ export class ProjectCategoryService {
     private httpService: HttpService,
   ) {}
 
-  async createProject(projectImage: Express.Multer.File, dto: ProjectDto) {
-    const { projectDescription, projectName } = dto;
+  async createChannel(channelImage: Express.Multer.File, dto: ProjectDto) {
+    const { channelDescription, channelTitle } = dto;
 
-    const existingProject = await this.prisma.eclProjects.findUnique({
+    console.log(dto)
+    const channelProject = await this.prisma.eclChannels.findUnique({
       where: {
-        projectName: projectName.toLowerCase(),
+        channelTitle: channelTitle.toLowerCase(),
       },
     });
 
-    if (existingProject) {
-      throw new BadRequestException('ProjectName already exists');
+    if (channelProject) {
+      throw new BadRequestException('channelTitle already exists');
     }
 
-    await this.prisma.eclProjects.create({
+    await this.prisma.eclChannels.create({
       data: {
-        projectDescription,
-        projectImage: projectImage.filename,
-        projectName,
+        channelDescription,
+        channelImage: channelImage.filename,
+        channelTitle,
       },
     });
 
     return {
-      message: 'Project created successfully',
+      message: 'Channel created successfully',
       respCode: '00',
     };
   }
 
-  async listProjects() {
-    const projects = await this.prisma.eclProjects.findMany();
+  async listChannels() {
+    const channels = await this.prisma.eclChannels.findMany();
 
-    // const temp = projects.map((project) => ({
-    //   ...project,
+    // const temp = channels.map((project) => ({
+    //   ...channels,
     // }));
     return {
-      projects,
-      message: 'All Projects',
+      channels,
+      message: 'All Channels',
       respCode: '00',
     };
   }
 
-  async updateProject(dto: ProjectUpdateDto) {
-    const { projectId, projectDescription, projectImage, projectName } = dto;
+  async updateChannel(dto: ProjectUpdateDto) {
+    const { channelId, channelDescription, channelImage, channelTitle } = dto;
 
-    const existingProject = await this.prisma.eclProjects.findUnique({
+    const existingChannel = await this.prisma.eclChannels.findUnique({
       where: {
-        projectId,
+        channelId,
       },
     });
 
-    if (!existingProject) {
+    if (!existingChannel) {
       throw new BadRequestException(
-        `Project with the project id ${projectId} not found!`,
+        `Channel with the channel id ${channelId} not found!`,
       );
     }
 
-    await this.prisma.eclProjects.update({
-      where: { projectId },
+    await this.prisma.eclChannels.update({
+      where: { channelId },
       data: {
-        projectDescription,
-        projectName,
-        projectImage: projectImage.filename,
+        channelDescription,
+        channelTitle,
+        channelImage: channelImage.filename,
       },
     });
 
     return {
-      message: 'Project updated successfully',
+      message: 'Channel updated successfully',
       respCode: '00',
     };
   }
 
-  async deleteProject(payload: any) {
-    const { projectId } = payload;
+  async deleteChannel(payload: any) {
+    const { channelId } = payload;
 
-    await this.prisma.eclProjects.delete({
+    await this.prisma.eclChannels.delete({
       where: {
-        projectId,
+        channelId,
       },
     });
 
     return {
-      message: 'Project deleted successfully',
+      message: 'Channel deleted successfully',
       respCode: '00',
     };
   }

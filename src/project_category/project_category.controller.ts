@@ -6,13 +6,13 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 
 
-@Controller('project-category')
+@Controller('channel-category')
 export class ProjectCategoryController {
   constructor(private readonly projectCategory: ProjectCategoryService) {}
 
-@Post('create-project-category')
+@Post('create-channel-category')
   @UseInterceptors(
-    FileInterceptor('projectImage', {
+    FileInterceptor('channelImage', {
       limits: {
         fileSize: 1024 * 1024 * 4,
       },
@@ -34,13 +34,13 @@ export class ProjectCategoryController {
       },
     }),
   )
-  async createProject(@UploadedFile() projectImage: Express.Multer.File, @Body() dto: ProjectDto) {
-    return this.projectCategory.createProject(projectImage, dto)
+  async createChannel(@UploadedFile() channelImage: Express.Multer.File, @Body() dto: ProjectDto) {
+    return this.projectCategory.createChannel(channelImage, dto)
   }
 
-  @Patch('update-project')
+  @Patch('update-channel')
   @UseInterceptors(
-    FileInterceptor('projectImage', {
+    FileInterceptor('channelImage', {
       limits: {
         fileSize: 1024 * 1024 * 4,
       },
@@ -62,17 +62,17 @@ export class ProjectCategoryController {
       },
     }),
   )
-  updateProject(@UploadedFile() @Body() dto: ProjectUpdateDto) {
-    return this.projectCategory.updateProject(dto);
+  updateChannel(@UploadedFile() @Body() dto: ProjectUpdateDto) {
+    return this.projectCategory.updateChannel(dto);
   }
 
-  @Post('delete-project')
-  deleteProject(@Body() payload: any) {
-    return this.projectCategory.deleteProject(payload);
+  @Post('delete-channel')
+  deleteChannel(@Body() payload: any) {
+    return this.projectCategory.deleteChannel(payload);
   }
 
-  @Get('list-projects')
-  listProjects() {
-    return this.projectCategory.listProjects();
+  @Get('list-channels')
+  listChannels() {
+    return this.projectCategory.listChannels();
   }
 }

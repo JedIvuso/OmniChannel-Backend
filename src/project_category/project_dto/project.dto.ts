@@ -3,7 +3,7 @@ import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 export class ProjectDto {
     @IsString()
     @IsNotEmpty()
-    public projectName: string;
+    public channelTitle: string;
 
     // @IsNumber()
     // public projectId: number;
@@ -13,5 +13,5 @@ export class ProjectDto {
 
     @IsString()
     @IsNotEmpty()
-    public projectDescription: string;
+    public channelDescription: string;
 }

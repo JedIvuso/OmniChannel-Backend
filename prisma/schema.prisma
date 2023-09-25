@@ -24,18 +24,18 @@ model User {
   updatedAt              DateTime  @updatedAt()
 }
 
-model eclProjects {
-  projectId              Int       @id  @default(autoincrement())
-  projectName            String    @unique
-  projectImage           String
-  projectDescription     String
+model eclChannels {
+  channelId              Int       @id  @default(autoincrement())
+  channelTitle           String    @unique
+  channelImage           String
+  channelDescription     String
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt()
 }
 
 model resources {
   id                     Int       @id  @default(autoincrement())
-  projectId              Int       @unique
+  channelId              Int       @unique
 }
 
 // model comments  {

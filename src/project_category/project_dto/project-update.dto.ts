@@ -4,8 +4,8 @@ import { IsNotEmpty, IsNumber } from "class-validator";
 
 export class ProjectUpdateDto extends PartialType(ProjectDto) {
     @IsNumber()
-    public projectId: number;
+    public channelId: number;
 
     @IsNotEmpty()
-    public projectImage: Express.Multer.File;
+    public channelImage: Express.Multer.File;
 }
