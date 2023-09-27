@@ -32,7 +32,7 @@ export class ProjectCategoryService {
     await this.prisma.eclChannels.create({
       data: {
         channelDescription,
-        channelImage: channelImage.filename,
+        channelImage: `http://localhost:3000/images/${channelImage.filename}`,
         channelTitle,
       },
     });
