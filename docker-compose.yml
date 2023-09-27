@@ -1,14 +1,49 @@
-version: '3.8'
+version: '3.0'
 services:
-  dev-db:
+  omnichannel-mysql-db:
     image: mysql
+    restart: always
+    env_file:
+      - .env
     ports:
-      - 3306:3306
+      - 3307:3306
     environment:
       MYSQL_ROOT_USER: root
       MYSQL_ROOT_PASSWORD: MyN3wP4ssw0rd
       MYSQL_DATABASE: omnichannel
+
+    volumes:
+      - cache:/data
+    deploy:
+      restart_policy:
+        condition: always
+      resources:
+        limits:
+          memory: 512m
     networks:
-      - channel-net
+      - test_net
+  omnichannel-api:
+    container_name: omnichannel-api
+    build:
+      context: .
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    env_file:
+      - .env
+    ports:
+      - 3000:3000
+    deploy:
+      restart_policy:
+        condition: always
+      resources:
+        limits:
+          memory: 128m
+    networks:
+      - test_net
+
+volumes:
+  cache:
+    driver: local
+
 networks:
-  channel-net:
+  test_net:

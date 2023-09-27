@@ -19,7 +19,6 @@ export class ProjectCategoryService {
   async createChannel(channelImage: Express.Multer.File, dto: ProjectDto) {
     const { channelDescription, channelTitle } = dto;
 
-    console.log(dto)
     const channelProject = await this.prisma.eclChannels.findUnique({
       where: {
         channelTitle: channelTitle.toLowerCase(),
